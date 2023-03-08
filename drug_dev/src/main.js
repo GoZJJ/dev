@@ -5,6 +5,9 @@ import store from './store'
 import "@/plugins/element.js"
 import 'normalize.css'
 import '@/assets/css/base.css'
+import api from '@/api/index.js'
+
+Vue.prototype.$api = api
 Vue.config.productionTip = false
 
 new Vue({

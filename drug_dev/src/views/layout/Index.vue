@@ -12,18 +12,21 @@
 </template>
 
 <script>
+//导入菜单和内容组件
 import Menu from "@/views/layout/menu/Index.vue";
 import Content from "@/views/layout/content/Index.vue";
 export default {
+  //注册组件
   components: { Menu, Content },
   data() {
     return {
+      //默认菜单不折叠
       isCollapse: false,
     };
   },
   methods: {
+    //改变折叠状态
     changeShow() {
-      console.log(2);
       this.isCollapse = !this.isCollapse;
     },
   },

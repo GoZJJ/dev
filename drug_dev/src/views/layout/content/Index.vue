@@ -3,7 +3,9 @@
     <!-- 顶部 -->
     <Header @changeShow="changeShow" v-bind="$attrs"></Header>
     <!-- 内容 -->
-    <router-view></router-view>
+    <div class="outWrapper">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -16,11 +18,16 @@ export default {
   },
   methods: {
     changeShow() {
+      //调用父组件的指定方法
       this.$emit("changeShow");
     },
   },
 };
 </script>
 
-<style>
+<style lang='less' scoped>
+//统一出口增加内边距
+.outWrapper {
+  padding: 10px;
+}
 </style>

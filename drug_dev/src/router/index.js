@@ -7,6 +7,9 @@ import Home from '@/views/home/Home.vue'
 const Product = () => import("@/views/product/Index.vue")
 const List = () => import("@/views/product/list/Index.vue")
 const Category = () => import("@/views/product/category/Index.vue")
+
+const User = () => import("@/views/user/Index.vue")
+const Userlist = () => import("@/views/user/list/Index.vue")
 Vue.use(VueRouter)
 
 const routes = [
@@ -30,6 +33,16 @@ const routes = [
         name: 'category',
         component: Category
       }]
+    }, {
+      path: '/user',
+      name: 'user',
+      component: User,
+      children: [{
+        path: '',
+        name: 'userlist',
+        component: Userlist
+      }]
+
     }]
   },
   {
