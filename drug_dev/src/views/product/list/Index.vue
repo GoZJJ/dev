@@ -27,7 +27,11 @@
           @click="toProductPage"
           >添加商品</el-button
         >
-        <el-button size="small" icon="el-icon-delete" type="danger"
+        <el-button
+          size="small"
+          icon="el-icon-delete"
+          type="danger"
+          @click="deleteMany"
           >批量删除</el-button
         >
       </div>
@@ -46,6 +50,7 @@
         header-cell-class-name="table-center"
         cell-class-name="table-center"
         row-class-name="table-center"
+        @selection-change="selectHandle"
         stripe
         border
       >
@@ -116,6 +121,7 @@ export default {
         pageSize: 10,
         current: 1,
       },
+      ids: [],
     };
   },
   created() {
@@ -132,7 +138,7 @@ export default {
       this.pages.pageSize = val;
       this.onSubmit();
     },
-    //请求后端得到页面数
+    //请求后端得到页面数据
     onSubmit() {
       this.$api.selectGoodsAdmin(this.formInline, this.pages).then((res) => {
         if (res.status == 200) {
@@ -150,10 +156,61 @@ export default {
         }
       });
     },
-    //点击跳转界面
+    //点击跳转到商品详情页面
     toProductPage() {
-      console.log(111);
       this.$router.push("/product/product-page");
+    },
+    //每行前边的选择事件
+    selectHandle(selection) {
+      let arr = [];
+      selection.forEach((element) => {
+        arr.push(element.goodsId);
+      });
+      this.ids = arr;
+    },
+    //单个删除事件
+    handleDelete(index, row) {
+      let arr = [];
+      arr[0] = row.goodsId;
+      this.ids = arr;
+      this.deleteMany();
+    },
+    //批量删除事件
+    deleteMany() {
+      if (!this.ids.length > 0) {
+        this.$message("您尚未选择任何内容！");
+        return;
+      }
+      this.$confirm(
+        "此操作将永久删除所选的" + this.ids.length + "条信息, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          let strIds = this.ids.join(",");
+          this.$api.deleteGoodsAdmin(strIds).then((res) => {
+            if (res.status == 200) {
+              if (res.data.code == 1) {
+                this.onSubmit();
+                this.$message.success(res.data.msg);
+              } else {
+                this.$message(res.data.msg);
+              }
+            } else {
+              this.$message.error(res);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
 };

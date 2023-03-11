@@ -26,7 +26,11 @@
           type="warning"
           >添加商品</el-button
         >
-        <el-button size="small" icon="el-icon-delete" type="danger"
+        <el-button
+          size="small"
+          icon="el-icon-delete"
+          type="danger"
+          @click="deleteMany"
           >批量删除</el-button
         >
       </div>
@@ -45,6 +49,7 @@
         header-cell-class-name="table-center"
         cell-class-name="table-center"
         row-class-name="table-center"
+        @selection-change="selectHandle"
         stripe
         border
       >
@@ -108,6 +113,7 @@ export default {
         pageSize: 10,
         current: 1,
       },
+      ids: [],
     };
   },
   created() {
@@ -131,7 +137,6 @@ export default {
             this.tableData = res.data.data.records;
             this.pages.total = res.data.data.total;
             this.pages.pageSize = res.data.data.size;
-            // console.log(res.data);
             this.$message.success(res.data.msg);
           } else {
             this.$message(res.data.msg);
@@ -141,15 +146,39 @@ export default {
         }
       });
     },
+    //每行前边的选择事件
+    selectHandle(selection) {
+      let arr = [];
+      selection.forEach((element) => {
+        arr.push(element.userId);
+      });
+      this.ids = arr;
+      console.log(this.ids);
+    },
     handleDelete(index, row) {
-      this.$confirm("此操作将永久删除该信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
+      let arr = [];
+      arr[0] = row.userId;
+      this.ids = arr;
+      this.deleteMany();
+    },
+    //批量删除事件
+    deleteMany() {
+      if (!this.ids.length > 0) {
+        this.$message("您尚未选择任何内容！");
+        return;
+      }
+      this.$confirm(
+        "此操作将永久删除所选的" + this.ids.length + "条信息, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
         .then(() => {
-          console.log(row.userId);
-          this.$api.deleteUserAdmin(row.userId).then((res) => {
+          let strIds = this.ids.join(",");
+          this.$api.deleteUserAdmin(strIds).then((res) => {
             if (res.status == 200) {
               if (res.data.code == 1) {
                 this.onSubmit();
@@ -168,7 +197,6 @@ export default {
             message: "已取消删除",
           });
         });
-      console.log("删除", index, row);
     },
   },
 };

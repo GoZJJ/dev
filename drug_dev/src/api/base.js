@@ -12,7 +12,10 @@ const base = {
   addGoodsAdmin: '/api/admin/addGoods',
   addUserAdmin: '/api/admin/addUser',
   addUserInfoAdmin: '/api/admin/addUserInfo',
+
+  addGoodsImg: "/api/upload",
 }
 //单一导出
-export const host = '';
+export const addGoodsImgUrl = "/api/upload";
+export const host = "http://localhost";
 export default base
