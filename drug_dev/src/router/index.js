@@ -4,10 +4,13 @@ import Layout from '@/views/layout/Index.vue'
 import Login from '@/views/login/Index.vue'
 import Home from '@/views/home/Home.vue'
 //异步加载的形式定义组件
+//商品管理
 const Product = () => import("@/views/product/Index.vue")
 const List = () => import("@/views/product/list/Index.vue")
 const Category = () => import("@/views/product/category/Index.vue")
+const ProductPage = () => import("@/views/product/list/ProductPage.vue")
 
+//会员管理
 const User = () => import("@/views/user/Index.vue")
 const Userlist = () => import("@/views/user/list/Index.vue")
 Vue.use(VueRouter)
@@ -20,7 +23,9 @@ const routes = [
       path: '/',
       name: 'home',
       component: Home
-    }, {
+    },
+    //商品管理 
+    {
       path: '/product',
       name: 'product',
       component: Product,
@@ -32,8 +37,17 @@ const routes = [
         path: 'category',
         name: 'category',
         component: Category
+      }, {
+        path: 'product-page',
+        name: 'ProductPage',
+        component: ProductPage,
+        meta: {
+          activeMenu: '/product/list'
+        }
       }]
-    }, {
+    },
+    //会员管理
+    {
       path: '/user',
       name: 'user',
       component: User,

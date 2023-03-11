@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-menu
-      :default-active="$route.path"
+      :default-active="active"
       class="el-menu-vertical-demo"
       background-color="#545c64"
       text-color="#fff"
@@ -49,7 +49,25 @@ export default {
   data() {
     return {
       // isCollapse: false,
+      active: "",
     };
+  },
+  created() {
+    if (this.$route.meta.activeMenu) {
+      this.active = this.$route.meta.activeMenu;
+    } else {
+      this.active = this.$route.path;
+    }
+  },
+  watch: {
+    $route(to, from) {
+      let { meta, path } = to;
+      if (meta.activeMenu) {
+        this.active = meta.activeMenu;
+      } else {
+        this.active = path;
+      }
+    },
   },
 };
 </script>

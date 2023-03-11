@@ -24,6 +24,7 @@
           size="small"
           icon="el-icon-circle-plus-outline"
           type="warning"
+          @click="toProductPage"
           >添加商品</el-button
         >
         <el-button size="small" icon="el-icon-delete" type="danger"
@@ -38,20 +39,46 @@
     border 边框 -->
 
     <div class="content">
-      <el-table :data="tableData" style="width: 100%" stripe border>
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        header-row-class-name="active-header"
+        header-cell-class-name="table-center"
+        cell-class-name="table-center"
+        row-class-name="table-center"
+        stripe
+        border
+      >
         <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="date" label="日期" width="180">
+        <el-table-column prop="goodsId" label="id" width="180">
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="180">
+        <el-table-column prop="goodsName" label="名称" width="180">
         </el-table-column>
-        <el-table-column prop="address" label="地址"> </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column prop="goodsPrice" label="估价"></el-table-column>
+        <el-table-column
+          prop="goodsDescription"
+          label="描述"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column prop="userName" label="卖家"></el-table-column>
+        <el-table-column
+          prop="userId"
+          label="卖家id"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column prop="address" label="小区"></el-table-column>
+        <el-table-column prop="goodsStatus" label="状态"> </el-table-column>
+        <el-table-column label="操作" width="180">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            <el-button
+              size="mini"
+              icon="el-icon-edit"
+              @click="handleEdit(scope.$index, scope.row)"
               >编辑</el-button
             >
             <el-button
               size="mini"
+              icon="el-icon-delete"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button
@@ -59,55 +86,74 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页组件 -->
+      <div class="pagination">
+        <Pagination
+          :total="pages.total"
+          :pageSize="pages.pageSize"
+          @CurrentChange="CurrentChange"
+          @SizeChange="SizeChange"
+        ></Pagination>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Pagination from "@/components/pgination/Pagination.vue";
 export default {
+  components: {
+    Pagination,
+  },
   data() {
     return {
       formInline: {
         queryKey: "",
       },
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-      ],
+      tableData: [],
+      pages: {
+        total: 100,
+        pageSize: 10,
+        current: 1,
+      },
     };
   },
+  created() {
+    this.onSubmit();
+  },
   methods: {
+    CurrentChange(val) {
+      console.log("页", val);
+      this.pages.current = val;
+      this.onSubmit();
+    },
+    SizeChange(val) {
+      console.log("页面size", val);
+      this.pages.pageSize = val;
+      this.onSubmit();
+    },
+    //请求后端得到页面数
     onSubmit() {
-      this.$api.selectGoodsAdmin(this.formInline).then((res) => {
-        // console.log(this.formInline);
+      this.$api.selectGoodsAdmin(this.formInline, this.pages).then((res) => {
         if (res.status == 200) {
           if (res.data.code == 1) {
+            this.tableData = res.data.data.records;
+            this.pages.total = res.data.data.total;
+            this.pages.pageSize = res.data.data.size;
+            // console.log(res.data);
             this.$message.success(res.data.msg);
           } else {
             this.$message(res.data.msg);
           }
         } else {
-          this.$message.error("超时错误！");
+          this.$message.error(res);
         }
       });
+    },
+    //点击跳转界面
+    toProductPage() {
+      console.log(111);
+      this.$router.push("/product/product-page");
     },
   },
 };
@@ -126,8 +172,16 @@ export default {
   border: 1px solid #eee;
   padding: 8px;
 }
-// .content {
-//   background-color: pink;
-//   padding: 10px;
-// }
+.content {
+  background-color: #fff;
+  /deep/.active-header {
+    color: #333;
+  }
+  /deep/.table-center {
+    text-align: center;
+  }
+  .pagination {
+    padding: 10px;
+  }
+}
 </style>

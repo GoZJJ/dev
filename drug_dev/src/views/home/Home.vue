@@ -18,13 +18,17 @@ export default {
   methods: {
     async totalInfo() {
       let res = await this.$api.totalInfo();
-      if (res.data.code === 1) {
-        this.totalData = res.data.data;
+      if (res.status == 200) {
+        if (res.data.code === 1) {
+          this.totalData = res.data.data;
+        } else {
+          this.$message({
+            message: res.data.msg,
+            type: "warning",
+          });
+        }
       } else {
-        this.$message({
-          message: res.data.msg,
-          type: "warning",
-        });
+        this.$message.error(res);
       }
     },
   },

@@ -94,7 +94,7 @@ export default {
                 this.$message(res.data.msg);
               }
             } else {
-              this.$message.error("超时错误！");
+              this.$message.error(res);
             }
           });
         }
