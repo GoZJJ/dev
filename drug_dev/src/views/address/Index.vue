@@ -1,5 +1,7 @@
 <template>
-  <div>订单汇总</div>
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>

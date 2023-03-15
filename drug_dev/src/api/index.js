@@ -7,17 +7,8 @@ const api = {
   totalInfo() {
     return axios.get(base.totalInfo);
   },
-  //后端查询商品接口
-  selectGoodsAdmin(form, pages) {
-    return axios.get(base.selectGoodsAdmin, {
-      params: {
-        queryKey: form.queryKey,
-        current: pages.current,
-        size: pages.pageSize
-      }
-    });
-  },
-  //后端查询用户接口
+
+  //用户管理接口
   selectUserAdmin(form, pages) {
     return axios.get(base.selectUserAdmin, {
       params: {
@@ -27,7 +18,6 @@ const api = {
       }
     })
   },
-  //后端删除用户接口
   deleteUserAdmin(ids) {
     return axios.delete(base.deleteUserAdmin, {
       params: {
@@ -35,7 +25,18 @@ const api = {
       }
     })
   },
-  //后端删除商品接口
+
+
+  //商品管理接口
+  selectGoodsAdmin(form, pages) {
+    return axios.get(base.selectGoodsAdmin, {
+      params: {
+        queryKey: form.queryKey,
+        current: pages.current,
+        size: pages.pageSize
+      }
+    });
+  },
   deleteGoodsAdmin(ids) {
     return axios.delete(base.deleteGoodsAdmin, {
       params: {
@@ -43,13 +44,72 @@ const api = {
       }
     })
   },
-  //后端增加商品接口
   addGoodsAdmin(goods) {
-    console.log(goods)
     return axios.post(base.addGoodsAdmin, {
       goods
     })
   },
+  updateGoodsAdmin(goods) {
+    return axios.put(base.updateGoodsAdmin, {
+      goods
+    })
+  },
+
+
+  //商品类别接口
+  selectGoodsCategoryAdmin() {
+    return axios.get(base.selectGoodsCategoryAdmin)
+  },
+  updateGoodsCategoryAdmin(goodsCategory) {
+    return axios.put(base.updateGoodsCategoryAdmin, {
+      goodsCategory
+    })
+  },
+  addGoodsCategoryAdmin(goodsCategory) {
+    return axios.post(base.addGoodsCategoryAdmin, {
+      goodsCategory
+    })
+  },
+  deleteGoodsCategoryAdmin(id) {
+    return axios.delete(base.deleteGoodsCategoryAdmin, {
+      params: {
+        id: id,
+      }
+    })
+  },
+  addGoodsCategoryOneLevel(goodsCategory) {
+    return axios.post(base.addGoodsCategoryOneLevel, {
+      goodsCategory
+    })
+  },
+
+  //地区接口
+  selectAddressAdmin() {
+    return axios.get(base.selectAddressAdmin)
+  },
+  updateAddressAdmin(address) {
+    return axios.put(base.updateAddressAdmin, {
+      address
+    })
+  },
+  addAddressAdmin(address) {
+    return axios.post(base.addAddressAdmin, {
+      address
+    })
+  },
+  deleteAddressAdmin(id) {
+    return axios.delete(base.deleteAddressAdmin, {
+      params: {
+        id: id,
+      }
+    })
+  },
+  addAddressOneLevel(address) {
+    return axios.post(base.addAddressOneLevel, {
+      address
+    })
+  },
+
   //添加图片接口
   addGoodsImg(file) {
     return axios.post(base.addGoodsImg, {
@@ -57,6 +117,9 @@ const api = {
         file: file,
       }
     })
+  },
+  userIsOnline() {
+    return axios.get(base.userIsOnline, { withCredentials: true })
   },
   //登录接口
   login(form) {

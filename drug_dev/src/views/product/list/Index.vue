@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-card shadow="never">商品列表</el-card>
     <!-- 产品搜索 -->
     <!-- el-form-item  表单控件 每一项内容-->
     <div class="header">
@@ -72,22 +73,48 @@
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column prop="address" label="小区"></el-table-column>
-        <el-table-column prop="goodsStatus" label="状态"> </el-table-column>
-        <el-table-column label="操作" width="180">
+        <el-table-column prop="goodsStatus" label="状态">
+          <template slot-scope="scope">
+            <el-tag type="warning" v-if="scope.row.goodsStatus == 1">
+              待审核
+            </el-tag>
+            <el-tag type="success" v-else-if="scope.row.goodsStatus == 2">
+              已上架
+            </el-tag>
+            <el-tag type="primary" v-else-if="scope.row.goodsStatus == 3">
+              交易中
+            </el-tag>
+            <el-tag type="danger" v-else-if="scope.row.goodsStatus == 4">
+              已拒绝
+            </el-tag>
+            <el-tag type="info" v-else-if="scope.row.goodsStatus == 5">
+              已下架
+            </el-tag>
+            <el-tag type="info" v-else-if="scope.row.goodsStatus == 0">
+              已售出
+            </el-tag>
+            <el-tag type="danger" v-else>禁用</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="178">
           <template slot-scope="scope">
             <el-button
               size="mini"
               icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)"
-              >编辑</el-button
-            >
+            ></el-button>
+            <el-button
+              size="mini"
+              icon="el-icon-s-tools"
+              type="primary"
+              @click="handleVerify(scope.$index, scope.row)"
+            ></el-button>
             <el-button
               size="mini"
               icon="el-icon-delete"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -101,14 +128,25 @@
         ></Pagination>
       </div>
     </div>
+    <!-- 弹窗 -->
+    <div class="dialogVerify">
+      <Dialog
+        ref="dialogVerify"
+        :info="info"
+        @updateViews="updateViews"
+      ></Dialog>
+    </div>
   </div>
 </template>
 
 <script>
 import Pagination from "@/components/pgination/Pagination.vue";
+import Dialog from "@/views/product/list/Dialog.vue";
+import { mapMutations } from "vuex";
 export default {
   components: {
     Pagination,
+    Dialog,
   },
   data() {
     return {
@@ -122,17 +160,22 @@ export default {
         current: 1,
       },
       ids: [],
+      info: {},
     };
   },
   created() {
     this.onSubmit();
   },
   methods: {
+    //vuex 中的方法
+    ...mapMutations("product", ["changeRowData", "changeTitle"]),
+    //当前页码改变事件
     CurrentChange(val) {
       console.log("页", val);
       this.pages.current = val;
       this.onSubmit();
     },
+    //当前页大小改变事件
     SizeChange(val) {
       console.log("页面size", val);
       this.pages.pageSize = val;
@@ -155,10 +198,6 @@ export default {
           this.$message.error(res);
         }
       });
-    },
-    //点击跳转到商品详情页面
-    toProductPage() {
-      this.$router.push("/product/product-page");
     },
     //每行前边的选择事件
     selectHandle(selection) {
@@ -211,6 +250,29 @@ export default {
             message: "已取消删除",
           });
         });
+    },
+    //审核事件
+    handleVerify(index, rwo) {
+      this.$refs.dialogVerify.dialogVisible = true;
+      this.info = rwo;
+      console.log(index, rwo);
+    },
+    updateViews() {
+      this.onSubmit();
+    },
+    //编辑事件
+    handleEdit(index, rwo) {
+      console.log(index, rwo);
+      //存储当前行的数据--vuex--跳转到另外一个界面--获取vuex行数据
+      this.changeRowData(rwo);
+      this.changeTitle("编辑");
+      //路由跳转
+      this.$router.push("/product/product-page");
+    },
+    //点击跳转到商品详情页面
+    toProductPage() {
+      this.changeTitle("添加");
+      this.$router.push("/product/product-page");
     },
   },
 };

@@ -85,6 +85,7 @@ export default {
             if (res.status == 200) {
               //登录成功
               if (res.data.code == 1) {
+                this.$router.push("/");
                 this.$message({
                   message: res.data.msg,
                   type: "success",

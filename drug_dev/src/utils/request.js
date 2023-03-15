@@ -1,5 +1,6 @@
 import axios from "axios";
 import qs from 'querystring'
+import router from '@/router'
 const instance = axios.create({
   timeout: 5000,
 })
@@ -15,6 +16,9 @@ instance.interceptors.request.use(function (config) {
 instance.interceptors.response.use(
   function (response) {
     //console.log("axios.interceptors response", response);
+    // if (response.data.msg == "请先登录后再操作！") {
+    //   router.push("/login")
+    // }
     return response;
   }, function (error) {
     console.log("axios.interceptors response error", error, error.message);

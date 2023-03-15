@@ -1,7 +1,7 @@
 <template>
   <div class="category">
     <!-- 标题 -->
-    <el-card shadow="never">商品分类</el-card>
+    <el-card shadow="never">地区管理</el-card>
     <div class="tree">
       <!-- 树的内容结构 -->
       <!-- 
@@ -12,8 +12,8 @@
        render-content	树节点的内容区的渲染 Function	Function(h, { node, data, store }	—	—
        -->
       <el-card shadow="never" class="box-card">
-        <el-button type="info" @click="addGoodsCategoryOneLevel"
-          >新增一级类目</el-button
+        <el-button type="info" @click="addAddressOneLevel"
+          >新增一级地区</el-button
         >
         <el-tree
           :data="data"
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import Dialog from "@/views/product//category/Dialog.vue";
+import Dialog from "@/views/address/category/Dialog.vue";
 export default {
   components: {
     Dialog,
@@ -58,11 +58,11 @@ export default {
     };
   },
   created() {
-    this.selectGoodsCategory();
+    this.selectAddress();
   },
   methods: {
     //增加一级标题
-    addGoodsCategoryOneLevel() {
+    addAddressOneLevel() {
       this.$refs.dialogs.dialogVisible = true;
       this.info = {
         title: "新增【一级】分类",
@@ -73,7 +73,7 @@ export default {
     },
     //渲染视图
     updateViews() {
-      this.selectGoodsCategory();
+      this.selectAddress();
     },
     //新增
     append(data) {
@@ -99,11 +99,11 @@ export default {
         }
       )
         .then(() => {
-          this.$api.deleteGoodsCategoryAdmin(data.id).then((res) => {
+          this.$api.deleteAddressAdmin(data.id).then((res) => {
             if (res.status == 200) {
               if (res.data.code == 1) {
                 //更新视图
-                this.selectGoodsCategory();
+                this.selectAddress();
                 this.$message.success(res.data.msg);
               } else {
                 this.$message(res.data.msg);
@@ -138,7 +138,7 @@ export default {
       return (
         <span class="custom-tree-node">
           <span>{node.label}</span>
-          {node.level == 1 ? (
+          {node.level == 1 || node.level == 2 ? (
             <span>
               <el-button
                 size="mini"
@@ -183,9 +183,9 @@ export default {
         </span>
       );
     },
-    //查询并渲染商品分类
-    selectGoodsCategory() {
-      this.$api.selectGoodsCategoryAdmin().then((res) => {
+    //查询并渲染地址
+    selectAddress() {
+      this.$api.selectAddressAdmin().then((res) => {
         if (res.status == 200) {
           if (res.data.code == 1) {
             this.data = [];
@@ -200,8 +200,19 @@ export default {
               //console.log(item);
               arr.forEach((element) => {
                 if (element.type == item.cid) {
+                  element.children = [];
                   item.children.push(element);
                 }
+              });
+            });
+            this.data.forEach((item) => {
+              item.children.forEach((i) => {
+                arr.forEach((element) => {
+                  if (element.type == i.cid) {
+                    // element.children = [];
+                    i.children.push(element);
+                  }
+                });
               });
             });
             this.$message.success(res.data.msg);

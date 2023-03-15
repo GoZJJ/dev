@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-card shadow="never">用户列表</el-card>
     <!-- 用户搜索 -->
     <!-- el-form-item  表单控件 每一项内容-->
     <div class="header">
@@ -24,7 +25,8 @@
           size="small"
           icon="el-icon-circle-plus-outline"
           type="warning"
-          >添加商品</el-button
+          @click="toUserPage"
+          >添加用户</el-button
         >
         <el-button
           size="small"
@@ -69,17 +71,25 @@
             <el-tag type="danger" v-else>禁用</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="178">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-              >编辑</el-button
-            >
             <el-button
               size="mini"
+              icon="el-icon-edit"
+              @click="handleEdit(scope.$index, scope.row)"
+            ></el-button>
+            <el-button
+              size="mini"
+              icon="el-icon-s-tools"
+              type="primary"
+              @click="handleVerify(scope.$index, scope.row)"
+            ></el-button>
+            <el-button
+              size="mini"
+              icon="el-icon-delete"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -98,6 +108,7 @@
 
 <script>
 import Pagination from "@/components/pgination/Pagination.vue";
+import { mapMutations } from "vuex";
 export default {
   components: {
     Pagination,
@@ -120,16 +131,21 @@ export default {
     this.onSubmit();
   },
   methods: {
+    //vuex 中的方法
+    ...mapMutations("product", ["changeRowData", "changeTitle"]),
+    //当前页码改变事件
     CurrentChange(val) {
       console.log("页", val);
       this.pages.current = val;
       this.onSubmit();
     },
+    //当前页大小改变事件
     SizeChange(val) {
       console.log("页面size", val);
       this.pages.pageSize = val;
       this.onSubmit();
     },
+    //查询事件
     onSubmit() {
       this.$api.selectUserAdmin(this.formInline, this.pages).then((res) => {
         if (res.status == 200) {
@@ -153,8 +169,9 @@ export default {
         arr.push(element.userId);
       });
       this.ids = arr;
-      console.log(this.ids);
+      // console.log(this.ids);
     },
+    //单个删除
     handleDelete(index, row) {
       let arr = [];
       arr[0] = row.userId;
@@ -197,6 +214,20 @@ export default {
             message: "已取消删除",
           });
         });
+    },
+    //编辑事件
+    handleEdit(index, rwo) {
+      console.log(index, rwo);
+      //存储当前行的数据--vuex--跳转到另外一个界面--获取vuex行数据
+      this.changeRowData(rwo);
+      this.changeTitle("编辑");
+      //路由跳转
+      this.$router.push("/user/user-page");
+    },
+    //点击跳转到用户详情页面
+    toUserPage() {
+      this.changeTitle("添加");
+      this.$router.push("/user/user-page");
     },
   },
 };

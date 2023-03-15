@@ -16,17 +16,10 @@
                   <el-input v-model="goods.userId"></el-input>
                 </el-form-item>
                 <el-form-item label="所属小区" prop="address">
-                  <!-- <el-select v-model="goods.address" placeholder="请选择小区">
+                  <el-select v-model="goods.address" placeholder="请选择小区">
                     <el-option label="碧桂园" value="碧桂园"></el-option>
                     <el-option label="恒大" value="恒大"></el-option>
-                  </el-select> -->
-                  <el-cascader
-                    v-model="goods.address"
-                    placeholder="请选择小区"
-                    :options="addressData"
-                    :show-all-levels="false"
-                    :props="defaultProps"
-                  ></el-cascader>
+                  </el-select>
                 </el-form-item>
                 <el-form-item label="药品类型" prop="goodsType">
                   <!-- <el-select
@@ -106,10 +99,7 @@ export default {
         userId: "",
         address: "",
       },
-      //药品类型数据
       data: [],
-      //地址数据
-      addressData: [],
       defaultProps: {
         label: "name",
         emitPath: false,
@@ -176,7 +166,6 @@ export default {
         //this.$refs.wangEditor.html = this.goods.goodsDescription;
       }
     },
-    //查询并渲染分类
     selectGoodsCategory() {
       this.$api.selectGoodsCategoryAdmin().then((res) => {
         if (res.status == 200) {
@@ -209,51 +198,6 @@ export default {
         }
       });
     },
-    //查询并渲染地址
-    selectAddress() {
-      this.$api.selectAddressAdmin().then((res) => {
-        if (res.status == 200) {
-          if (res.data.code == 1) {
-            this.addressData = [];
-            let arr = res.data.data;
-            arr.forEach((element) => {
-              if (element.type == 1) {
-                element.value = element.name;
-                element.children = [];
-                this.addressData.push(element);
-              }
-            });
-            this.addressData.forEach((item) => {
-              //console.log(item);
-              arr.forEach((element) => {
-                if (element.type == item.cid) {
-                  element.value = element.name;
-                  element.children = [];
-                  item.children.push(element);
-                }
-              });
-            });
-            this.addressData.forEach((item) => {
-              item.children.forEach((items) => {
-                arr.forEach((element) => {
-                  if (element.type == items.cid) {
-                    element.value = element.name;
-                    // element.children = [];
-                    items.children.push(element);
-                  }
-                });
-              });
-            });
-            console.log(this.addressData);
-            this.$message.success(res.data.msg);
-          } else {
-            this.$message(res.data.msg);
-          }
-        } else {
-          this.$message.error(res);
-        }
-      });
-    },
   },
   computed: {
     //读取vuex中的数据
@@ -261,7 +205,6 @@ export default {
   },
   created() {
     this.selectGoodsCategory();
-    this.selectAddress();
     if (this.title == "编辑") {
       //赋值rowData是个新值
       // this.goods = { ...this.rowData }; //浅copy

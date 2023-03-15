@@ -31,13 +31,17 @@
           <el-menu-item index="/product/category">商品分类</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="3" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
+      <el-menu-item index="/order">
+        <i class="el-icon-menu"></i>
+        <span slot="title">订单管理</span>
       </el-menu-item>
-      <el-menu-item index="4">
+      <el-menu-item index="/comment">
         <i class="el-icon-setting"></i>
-        <span slot="title">导航四</span>
+        <span slot="title">评论管理</span>
+      </el-menu-item>
+      <el-menu-item index="/address">
+        <i class="el-icon-setting"></i>
+        <span slot="title">地区管理</span>
       </el-menu-item>
     </el-menu>
   </div>
